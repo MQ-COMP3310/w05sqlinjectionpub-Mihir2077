@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -39,12 +40,14 @@ public class App {
             System.out.println("Wordle created and connected.");
         } else {
             System.out.println("Not able to connect. Sorry!");
+            logger.log(Level.WARNING,"Not able to connect");
             return;
         }
         if (wordleDatabaseConnection.createWordleTables()) {
             System.out.println("Wordle structures in place.");
         } else {
             System.out.println("Not able to launch. Sorry!");
+            logger.log(Level.WARNING,"Not able to launch");
             return;
         }
 
@@ -57,16 +60,24 @@ public class App {
                 // System.out.println(line);
                 if (line.matches("^[a-z]{4}$")){
                     wordleDatabaseConnection.addValidWord(i, line);
+                    
+                    // Logging all the valid words
+                    logger.log(Level.INFO, "Valid word: {0}", line); 
                 }
                 else {
-                    System.out.println (line);
+                    // Logging all the invalid words
+                    logger.log(Level.SEVERE,"Invalid word read from file data.txt: {0}", line);
                 }
                 i++;
             }
 
         } catch (IOException e) {
             System.out.println("Not able to load . Sorry!");
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+
+            // Logging if the file was not able to be loaded
+            logger.log(Level.WARNING, "Not able to load the file {0}", e);
+
             return;
         }
 
@@ -76,15 +87,15 @@ public class App {
             System.out.print("Enter a 4 letter word for a guess or q to quit: ");
             String guess = scanner.nextLine();
 
-            // The input should be good
-            while (!guess.matches("^[a-z]{4}$")){
+            // // The input should be good
+            // while (!guess.matches("^[a-z]{4}$")){
 
-                if (guess.equals("q")){
-                    break;
-                }
-                System.out.print("Enter another word which is 4 letters for a guess or q to quit: ");
-                guess = scanner.nextLine(); // Read user input  
-            }
+            //     if (guess.equals("q")){
+            //         break;
+            //     }
+            //     System.out.print("Enter another word which is 4 letters for a guess or q to quit: ");
+            //     guess = scanner.nextLine(); // Read user input  
+            // }
 
             while (!guess.equals("q")) {
 
@@ -100,7 +111,10 @@ public class App {
 
                 }
                 else {
-                    System.out.println ("The word" + guess + " is not valid");
+                    System.out.println ("The word " + guess + " is not valid");
+
+                    // Logging all the invalid guesses
+                    logger.log(Level.INFO, "Invalid guess: ''{0}''.", guess);
                 }
 
                 System.out.print("Enter a 4 letter word for a guess or q to quit: " );
@@ -120,6 +134,8 @@ public class App {
             }
         } catch (NoSuchElementException | IllegalStateException e) {
             e.printStackTrace();
+            logger.log(Level.WARNING,"Cannot scan");
+
         }
 
     }
