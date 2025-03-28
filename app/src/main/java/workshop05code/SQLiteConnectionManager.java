@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -65,7 +66,9 @@ public class SQLiteConnectionManager {
 
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Couldn't connect to the database: {0}", e.getMessage());
+
         }
     }
 
@@ -84,7 +87,9 @@ public class SQLiteConnectionManager {
                     return true;
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                // System.out.println(e.getMessage());
+                logger.log(Level.SEVERE,"File does not exists in the correct location: {0}", e.getMessage());
+
                 return false;
             }
         }
@@ -109,7 +114,9 @@ public class SQLiteConnectionManager {
                 return true;
 
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                // System.out.println(e.getMessage());
+                logger.log(Level.WARNING,"Table is not created: {0}", e.getMessage());
+
                 return false;
             }
         }
@@ -133,7 +140,9 @@ public class SQLiteConnectionManager {
             pstmt.setString(2, word);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+            logger.log(Level.WARNING, "Cannot store the id, word pair in the valid words: {0}", e.getMessage());
+
         }
 
     }
@@ -164,7 +173,8 @@ public class SQLiteConnectionManager {
             return false;
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage());
             return false;
         }
 
